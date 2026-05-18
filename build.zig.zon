@@ -1,0 +1,29 @@
+.{
+    .name = .core,
+    .version = "0.0.0",
+    .fingerprint = 0x6b8d854f1a9dbcc8,
+    .minimum_zig_version = "0.16.0",
+    .dependencies = .{
+        .zglfw = .{
+            .url = "git+https://github.com/zig-gamedev/zglfw#51003c105d23db378bb59ce415a387b22f1b0892",
+            .hash = "zglfw-0.10.0-dev-zgVDNIy4IQDJNRy4jrP1As-SZxfJpuWhU1iJ-wBab_VD",
+        },
+        .zopengl = .{
+            .url = "git+https://github.com/zig-gamedev/zopengl#29908b1ba2d91baf91e348f6cd192630488d77b6",
+            .hash = "zopengl-0.6.0-dev-5-tnz32mDgB82moljuLD0fmbj1mU3NSCXjzttpmoV2iP",
+        },
+        .zmath = .{
+            .url = "git+https://github.com/zig-gamedev/zmath#9e42b04a24c970a297b365f3d3022f92dbf3219d",
+            .hash = "zmath-0.11.0-dev-wjwivTwtAwDOjG2_KGP-HLtHrONfsFfHttalmxFAGVAK",
+        },
+        .TrueType = .{
+            .url = "git+https://codeberg.org/andrewrk/TrueType#b79115f93a8d9fbd19846a7199797a654801839e",
+            .hash = "TrueType-0.0.0-Ne-mWNJxAQCM7WYbeHz6cieiVtPqxeOQ2b5ekAqtYDac",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}
