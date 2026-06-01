@@ -25,6 +25,7 @@ pub fn build(b: *std.Build) void {
             .{ .name = "zmath", .module = b.dependency("zmath", .{}).module("root") },
         },
     });
+    core.addAnonymousImport("window_icon", .{ .root_source_file = b.path("assets/icon.png") });
 
     const assets = b.createModule(.{
         .root_source_file = b.path("assets/assets.zig"),
