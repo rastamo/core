@@ -60,7 +60,8 @@ pub fn main(init: std.process.Init) !void {
     shader.setMat4("projection", projection);
 
     // Character loop
-    const ttf = try TrueType.load(@embedFile("NotoSans_Condensed_Black.ttf"));
+    const font = @import("assets").font;
+    const ttf = try TrueType.load(font);
     const scale = ttf.scaleForPixelHeight(400);
     var buffer: std.ArrayListUnmanaged(u8) = .empty;
     defer buffer.deinit(gpa);
