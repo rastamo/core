@@ -7,9 +7,6 @@ const core = @import("core");
 const zopengl = @import("zopengl");
 const gl = zopengl.bindings;
 
-var vao: u32 = undefined;
-var vbo: u32 = undefined;
-
 pub fn main(init: std.process.Init) !void {
     const io = init.io;
     std.debug.print("{s}\n", .{"Core library"});
