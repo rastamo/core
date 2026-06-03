@@ -7,16 +7,19 @@ const core = @import("core");
 const zopengl = @import("zopengl");
 const gl = zopengl.bindings;
 
+pub const std_options: std.Options = core.recommended_std_options;
 pub fn main(init: std.process.Init) !void {
     const io = init.io;
-    std.debug.print("{s}\n", .{"Core library"});
+    core.init();
 
     var window = try core.window.init();
     defer window.deinit();
 
-    var shader = try core.graphics.Shader.init(io, "src/graphics/shaders/triangle.vs", "src/graphics/shaders/triangle.fs");
+    var shader = core.graphics.Shader.init(io, "src/graphics/shaders/triangle.vs", "src/graphics/shaders/triangle.fs") catch |err| {
+        std.log.err("Error creating shader: {}\n", .{err});
+        return;
+    };
     defer shader.deinit();
-    shader.use();
 
     const vertices = [_]f32{
         -0.5, -0.5, 0,
