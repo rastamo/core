@@ -2,7 +2,7 @@ const Self = @This();
 const window_icon = @embedFile("window_icon");
 const std = @import("std");
 const glfw = @import("zglfw");
-const gl = @import("gl.zig");
+const gl = @import("graphics/backends/opengl.zig");
 const builtin = @import("builtin");
 
 handle: *glfw.Window = undefined,
@@ -28,7 +28,8 @@ pub fn init() !Self {
     const monitor = glfw.getPrimaryMonitor();
     const video_mode = try glfw.getVideoMode(monitor.?);
     self.width, self.height = .{ @floatFromInt(video_mode.width), @floatFromInt(video_mode.height) };
-    self.handle = try glfw.createWindow(video_mode.width, video_mode.height, "Redoubt", glfw.getPrimaryMonitor(), null);
+    // Users should be able to set title, and maybe window size.
+    self.handle = try glfw.createWindow(video_mode.width, video_mode.height, "Core", glfw.getPrimaryMonitor(), null);
     glfw.makeContextCurrent(self.handle);
 
     const icons = [_]glfw.Image{.{ .pixels = @constCast(window_icon), .height = 32, .width = 32 }};
@@ -51,6 +52,10 @@ pub fn setShouldClose(self: Self, answer: bool) void {
 pub fn swapBuffers(self: Self) void {
     self.handle.swapBuffers();
 }
+pub fn setVSync(_: Self, value: bool) void {
+    glfw.swapInterval(@intFromBool(value));
+}
+
 pub fn toggleFullscreen(self: *Self) void {
     // Debug this on Windows.
     self.is_fullscreen = !self.is_fullscreen;

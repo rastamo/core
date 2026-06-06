@@ -2,15 +2,16 @@ const std = @import("std");
 const builtin = @import("builtin");
 const Io = std.Io;
 
-// This file should only take engine as dependency.
 const core = @import("core");
-const zopengl = @import("zopengl");
-const gl = zopengl.bindings;
+const gfx = core.graphics;
 
+// Currently only enables colored logs.
 pub const std_options: std.Options = core.recommended_std_options;
+
 pub fn main(init: std.process.Init) !void {
     const io = init.io;
     core.init();
+    defer core.deinit();
 
     var window = try core.window.init();
     defer window.deinit();
@@ -30,12 +31,8 @@ pub fn main(init: std.process.Init) !void {
         0, 1, 2,
     };
 
-    const vertex_array: core.graphics.gl.VertexArray = .init(&vertices, &indices);
-    vertex_array.bind();
-
-    // Position
-    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 0 * @sizeOf(f32), null);
-    gl.enableVertexAttribArray(0);
+    const vertex_array: gfx.VertexArray = .init(&vertices, &indices);
+    vertex_array.addLayout();
 
     const clock: Io.Clock = .boot;
     var input: core.Input = .init();
@@ -44,13 +41,15 @@ pub fn main(init: std.process.Init) !void {
         if (window.handle.getKey(.escape) == .press) {
             window.setShouldClose(true);
         }
-        core.graphics.gl.clearScreen();
+        gfx.clearScreen();
 
         shader.use();
         vertex_array.bind();
-        core.graphics.gl.draw();
+        gfx.draw();
 
         window.swapBuffers();
+
+        // Add proper sleep based on time elapsed.
         try std.Io.sleep(io, .fromMilliseconds(16), clock);
     }
 }
