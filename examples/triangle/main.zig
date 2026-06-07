@@ -6,7 +6,7 @@ const core = @import("core");
 const gfx = core.graphics;
 
 // Currently only enables colored logs.
-pub const std_options: std.Options = core.recommended_std_options;
+// pub const std_options: std.Options = core.recommended_std_options;
 
 pub fn main(init: std.process.Init) !void {
     const io = init.io;
@@ -15,6 +15,7 @@ pub fn main(init: std.process.Init) !void {
 
     var window = try core.window.init();
     defer window.deinit();
+    window.setVSync(false);
 
     var shader = core.graphics.Shader.init(io, "src/graphics/shaders/triangle.vs", "src/graphics/shaders/triangle.fs") catch |err| {
         std.log.err("Error creating shader: {}\n", .{err});
@@ -27,16 +28,15 @@ pub fn main(init: std.process.Init) !void {
         0,    0.5,  0,
         0.5,  -0.5, 0,
     };
-    const indices = [_]u32{
-        0, 1, 2,
-    };
-
+    const indices = [_]u32{ 0, 1, 2 };
     const vertex_array: gfx.VertexArray = .init(&vertices, &indices);
     vertex_array.addLayout();
 
-    const clock: Io.Clock = .boot;
     var input: core.Input = .init();
+    var time: core.Time = .init(io);
+    // try time.sleep();
     while (!window.shouldClose()) {
+        time.update();
         input.poll();
         if (window.handle.getKey(.escape) == .press) {
             window.setShouldClose(true);
@@ -48,8 +48,7 @@ pub fn main(init: std.process.Init) !void {
         gfx.draw();
 
         window.swapBuffers();
-
-        // Add proper sleep based on time elapsed.
-        try std.Io.sleep(io, .fromMilliseconds(16), clock);
+        try time.sleep();
+        std.log.info("FPS: {}", .{time.getFps()});
     }
 }

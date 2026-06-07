@@ -12,6 +12,7 @@ pub const math = @import("math.zig");
 pub const window = @import("Window.zig");
 pub const Input = @import("Input.zig");
 pub const log = @import("log.zig");
+pub const Time = @import("Time.zig");
 
 pub const recommended_std_options: std.Options = .{ .logFn = log.log };
 
