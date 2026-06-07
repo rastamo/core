@@ -20,6 +20,10 @@
             .url = "git+https://codeberg.org/andrewrk/TrueType#b79115f93a8d9fbd19846a7199797a654801839e",
             .hash = "TrueType-0.0.0-Ne-mWNJxAQCM7WYbeHz6cieiVtPqxeOQ2b5ekAqtYDac",
         },
+        .zstbi = .{
+            .url = "git+https://github.com/zig-gamedev/zstbi#3813f5f113b26f644cfa01a30155cc76b3526e91",
+            .hash = "zstbi-0.11.0-dev-L0Ea_3GWBwAh7m54XX055vwLKPTPij5hyqyeq92MXPE2",
+        },
     },
     .paths = .{
         "build.zig",

@@ -6,6 +6,8 @@ const IndexBuffer = @import("IndexBuffer.zig");
 id: u32,
 vbo: VertexBuffer,
 ebo: IndexBuffer,
+layout_index: u32 = 0,
+len_counter: u32 = 0,
 
 pub fn init(vertices: []const f32, indices: []const u32) Self {
     var vao: u32 = 0;
@@ -27,9 +29,11 @@ pub fn indexCount(self: Self) usize {
     return self.ebo.count;
 }
 
-pub fn addLayout(self: Self) void {
-    // TODO: This function need to be expanded to allow multiple layouts.
+pub fn addLayout(self: *Self, len: u32, stride: u32) void {
+    // This function need a friendlier ux.
     self.bind();
-    gl.vertexAttribPointer(0, 3, gl.FLOAT, gl.FALSE, 0 * @sizeOf(f32), null);
-    gl.enableVertexAttribArray(0);
+    gl.vertexAttribPointer(self.layout_index, @intCast(len), gl.FLOAT, gl.FALSE, @intCast(stride), @ptrFromInt(self.len_counter * @sizeOf(f32)));
+    gl.enableVertexAttribArray(self.layout_index);
+    self.layout_index += 1;
+    self.len_counter += len;
 }

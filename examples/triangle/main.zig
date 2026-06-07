@@ -5,9 +5,6 @@ const Io = std.Io;
 const core = @import("core");
 const gfx = core.graphics;
 
-// Currently only enables colored logs.
-// pub const std_options: std.Options = core.recommended_std_options;
-
 pub fn main(init: std.process.Init) !void {
     const io = init.io;
     core.init();
@@ -34,7 +31,7 @@ pub fn main(init: std.process.Init) !void {
 
     var input: core.Input = .init();
     var time: core.Time = .init(io);
-    // try time.sleep();
+
     while (!window.shouldClose()) {
         time.update();
         input.poll();
@@ -49,6 +46,6 @@ pub fn main(init: std.process.Init) !void {
 
         window.swapBuffers();
         try time.sleep();
-        std.log.info("FPS: {}", .{time.getFps()});
+        std.log.info("dt: {d:.2} ms, fps: {d:.0}", .{ time.dt() * 1000, time.getFps() });
     }
 }

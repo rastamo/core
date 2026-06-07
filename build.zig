@@ -7,6 +7,7 @@ const Example = struct {
 
 const examples = [_]Example{
     .{ .name = "triangle", .file = "examples/triangle/main.zig" },
+    .{ .name = "texture", .file = "examples/texture/main.zig" },
     .{ .name = "text", .file = "examples/text/main.zig" },
 };
 
@@ -23,6 +24,7 @@ pub fn build(b: *std.Build) void {
             .{ .name = "zglfw", .module = zglfw.module("root") },
             .{ .name = "zopengl", .module = b.dependency("zopengl", .{}).module("root") },
             .{ .name = "zmath", .module = b.dependency("zmath", .{}).module("root") },
+            .{ .name = "zstbi", .module = b.dependency("zstbi", .{}).module("root") },
         },
     });
     core.addAnonymousImport("window_icon", .{ .root_source_file = b.path("assets/icon.png") });
@@ -31,7 +33,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("assets/assets.zig"),
     });
 
-    const example = b.option([]const u8, "example", "which example to build") orelse "triangle";
+    const example = b.option([]const u8, "example", "which example to build") orelse "texture";
     var exe: ?*std.Build.Step.Compile = null;
     for (examples) |ex| {
         if (!std.mem.eql(u8, ex.name, example)) continue;
@@ -45,10 +47,6 @@ pub fn build(b: *std.Build) void {
                 .imports = &.{
                     .{ .name = "core", .module = core },
                     .{ .name = "assets", .module = assets },
-                    .{ .name = "zglfw", .module = zglfw.module("root") },
-                    .{ .name = "zopengl", .module = b.dependency("zopengl", .{}).module("root") },
-                    .{ .name = "zmath", .module = b.dependency("zmath", .{}).module("root") },
-                    .{ .name = "TrueType", .module = b.dependency("TrueType", .{}).module("TrueType") },
                 },
             }),
         });

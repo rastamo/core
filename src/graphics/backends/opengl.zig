@@ -1,5 +1,5 @@
 const zopengl = @import("zopengl");
-const gl = zopengl.bindings;
+pub const gl = zopengl.bindings;
 const glfw = @import("zglfw");
 
 const Rgba = struct { r: f32 = 0.8, g: f32 = 0.2, b: f32 = 0.8, a: f32 = 1.0 };
@@ -15,8 +15,8 @@ pub fn init() !void {
     gl.enable(gl.MULTISAMPLE);
     gl.enable(gl.LINE_SMOOTH);
     // gl.enable(gl.CULL_FACE);
-    // gl.enable(gl.BLEND); // PNG ALPHA
-    // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); // PNG ALPHA
+    gl.enable(gl.BLEND); // PNG ALPHA
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); // PNG ALPHA
 }
 
 pub fn clearScreen() void {
@@ -31,4 +31,8 @@ pub fn polygonMode() void {
 
 pub fn draw() void {
     gl.drawArrays(gl.TRIANGLES, 0, 3);
+}
+
+pub fn drawElements() void {
+    gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, null);
 }

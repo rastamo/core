@@ -6,6 +6,7 @@ pub const graphics = struct {
 
     pub const clearScreen: *const fn () void = opengl.clearScreen;
     pub const draw = opengl.draw;
+    pub const drawElements = opengl.drawElements;
 };
 
 pub const math = @import("math.zig");
@@ -13,6 +14,7 @@ pub const window = @import("Window.zig");
 pub const Input = @import("Input.zig");
 pub const log = @import("log.zig");
 pub const Time = @import("Time.zig");
+pub const zstbi = @import("zstbi");
 
 pub const recommended_std_options: std.Options = .{ .logFn = log.log };
 
