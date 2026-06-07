@@ -11,12 +11,12 @@ pub const Version = struct {
 };
 pub fn init() !void {
     try zopengl.loadCoreProfile(@ptrCast(&glfw.getProcAddress), Version.major, Version.minor);
-    // gl.enable(gl.DEPTH_TEST); // This is needed for proper 3D, however 2D overlay won't work.
+    gl.enable(gl.DEPTH_TEST); // This is needed for proper 3D, however 2D overlay won't work.
     gl.enable(gl.MULTISAMPLE);
     gl.enable(gl.LINE_SMOOTH);
     // gl.enable(gl.CULL_FACE);
-    gl.enable(gl.BLEND); // PNG ALPHA
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); // PNG ALPHA
+    // gl.enable(gl.BLEND); // PNG ALPHA
+    // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); // PNG ALPHA
 }
 
 pub fn clearScreen() void {

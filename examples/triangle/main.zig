@@ -3,6 +3,7 @@ const builtin = @import("builtin");
 const Io = std.Io;
 
 const core = @import("core");
+// const backend = core
 const gfx = core.graphics;
 
 pub fn main(init: std.process.Init) !void {
@@ -26,8 +27,8 @@ pub fn main(init: std.process.Init) !void {
         0.5,  -0.5, 0,
     };
     const indices = [_]u32{ 0, 1, 2 };
-    const vertex_array: gfx.VertexArray = .init(&vertices, &indices);
-    vertex_array.addLayout();
+    var vertex_array: gfx.VertexArray = .init(&vertices, &indices);
+    vertex_array.addLayout(3, 3);
 
     var input: core.Input = .init();
     var time: core.Time = .init(io);
@@ -46,6 +47,6 @@ pub fn main(init: std.process.Init) !void {
 
         window.swapBuffers();
         try time.sleep();
-        std.log.info("dt: {d:.2} ms, fps: {d:.0}", .{ time.dt() * 1000, time.getFps() });
+        // std.log.info("dt: {d:.2} ms, fps: {d:.0}", .{ time.dt() * 1000, time.getFps() });
     }
 }
