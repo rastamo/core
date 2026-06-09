@@ -8,7 +8,7 @@ const Example = struct {
 const examples = [_]Example{
     .{ .name = "triangle", .file = "examples/triangle/main.zig" },
     .{ .name = "texture", .file = "examples/texture/main.zig" },
-    .{ .name = "text", .file = "examples/text/main.zig" },
+    // .{ .name = "text", .file = "examples/text/main.zig" },
 };
 
 pub fn build(b: *std.Build) void {
@@ -63,4 +63,29 @@ pub fn build(b: *std.Build) void {
 
     const run_step = b.step("run", "Run selected example");
     run_step.dependOn(&run_cmd.step);
+
+    // const build_all = b.option(bool, "all", "Build all examples") orelse false;
+    const all_step = b.step("all", "Build all examples");
+    const install_step = b.getInstallStep();
+    // if (build_all) {
+    for (examples) |ex| {
+        exe = b.addExecutable(.{
+            .name = ex.name,
+            .root_module = b.createModule(.{
+                .root_source_file = b.path(ex.file),
+                .target = target,
+                .optimize = optimize,
+                .imports = &.{
+                    .{ .name = "core", .module = core },
+                    .{ .name = "assets", .module = assets },
+                },
+            }),
+        });
+
+        exe.?.use_llvm = true;
+        exe.?.root_module.linkLibrary(zglfw.artifact("glfw"));
+        b.installArtifact(exe.?);
+        all_step.dependOn(install_step);
+    }
+    // }
 }
