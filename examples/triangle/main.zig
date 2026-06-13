@@ -3,8 +3,7 @@ const builtin = @import("builtin");
 const Io = std.Io;
 
 const core = @import("core");
-// const backend = core
-const gfx = core.graphics;
+const gfx = core.graphics.backend(.default);
 
 pub fn main(init: std.process.Init) !void {
     const io = init.io;
@@ -15,7 +14,9 @@ pub fn main(init: std.process.Init) !void {
     defer window.deinit();
     window.setVSync(false);
 
-    var shader = core.graphics.Shader.init(io, "src/graphics/shaders/triangle.vs", "src/graphics/shaders/triangle.fs") catch |err| {
+    try gfx.init();
+    // Abstract out!
+    var shader = gfx.Shader.init(io, "src/graphics/backends/opengl/shaders/triangle.vs", "src/graphics/backends/opengl/shaders/triangle.fs") catch |err| {
         std.log.err("Error creating shader: {}\n", .{err});
         return;
     };
@@ -28,10 +29,11 @@ pub fn main(init: std.process.Init) !void {
     };
     const indices = [_]u32{ 0, 1, 2 };
     var vertex_array: gfx.VertexArray = .init(&vertices, &indices);
-    vertex_array.addLayout(3, 3);
+    vertex_array.addLayout(3, 0);
 
     var input: core.Input = .init();
     var time: core.Time = .init(io);
+    // core.graphics.opengl.polygonMode();
 
     while (!window.shouldClose()) {
         time.update();
@@ -43,7 +45,7 @@ pub fn main(init: std.process.Init) !void {
 
         shader.use();
         vertex_array.bind();
-        gfx.draw();
+        gfx.triangle();
 
         window.swapBuffers();
         try time.sleep();

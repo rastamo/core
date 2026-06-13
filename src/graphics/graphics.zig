@@ -1,15 +1,35 @@
+// const Self = @This();
 const std = @import("std");
-pub const opengl = @import("backends/opengl.zig");
-pub const Shader = @import("Shader.zig");
-pub const VertexArray = @import("VertexArray.zig");
+const Surface = @import("../Window.zig").Surface;
 
-// Should probably be updated.
-pub const clearScreen: *const fn () void = opengl.clearScreen;
-pub const draw = opengl.draw;
-pub const drawElements = opengl.drawElements;
+pub const opengl = @import("backends/opengl/opengl.zig");
+pub const vulkan = @import("backends/vulkan/vulkan.zig");
 
-pub const vulkan = struct {
-    pub fn draw() void {
-        std.log.info("Hello from: {s}", .{"Vulkan"});
+pub const Backend = enum {
+    default,
+    opengl,
+    vulkan, // Not impl yet.
+
+    pub fn impl(comptime self: Backend) type {
+        return switch (self) {
+            .default => opengl,
+            .opengl => opengl,
+            .vulkan => vulkan,
+        };
     }
 };
+
+pub fn backend(comptime b: Backend) type {
+    const impl = Backend.impl(b);
+    return struct {
+        pub const opengl = impl;
+        pub const Shader = impl.Shader;
+        pub const VertexArray = impl.VertexArray;
+        pub const init = impl.init;
+        pub const clearScreen = impl.clearScreen;
+        pub const drawElements = impl.drawElements;
+        pub fn triangle() void {
+            impl.drawElements();
+        }
+    };
+}

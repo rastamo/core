@@ -2,7 +2,7 @@ const Self = @This();
 const window_icon = @embedFile("window_icon");
 const std = @import("std");
 const glfw = @import("zglfw");
-const gl = @import("graphics/backends/opengl.zig");
+const gl = @import("graphics/backends/opengl/opengl.zig");
 const builtin = @import("builtin");
 
 handle: *glfw.Window = undefined,
@@ -34,13 +34,18 @@ pub fn init() !Self {
 
     const icons = [_]glfw.Image{.{ .pixels = @constCast(window_icon), .height = 32, .width = 32 }};
     glfw.setWindowIcon(self.handle, &icons);
-    try gl.init();
+    // try gl.init();
     return self;
 }
 
 pub fn deinit(self: *Self) void {
     self.handle.destroy();
     glfw.terminate();
+}
+
+pub const Surface = struct { native: *anyopaque };
+pub fn createSurface(self: *Self) Surface {
+    return Surface{ .native = @ptrCast(self.handle) };
 }
 
 pub fn shouldClose(self: Self) bool {
