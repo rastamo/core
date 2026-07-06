@@ -1,5 +1,5 @@
 const Self = @This();
-const window_icon = @embedFile("window_icon");
+// const window_icon = @embedFile("window_icon");
 const std = @import("std");
 const glfw = @import("zglfw");
 const gl = @import("graphics/backends/opengl/opengl.zig");
@@ -32,8 +32,8 @@ pub fn init() !Self {
     self.handle = try glfw.createWindow(video_mode.width, video_mode.height, "Core", glfw.getPrimaryMonitor(), null);
     glfw.makeContextCurrent(self.handle);
 
-    const icons = [_]glfw.Image{.{ .pixels = @constCast(window_icon), .height = 32, .width = 32 }};
-    glfw.setWindowIcon(self.handle, &icons);
+    // const icons = [_]glfw.Image{.{ .pixels = @constCast(window_icon), .height = 32, .width = 32 }};
+    // glfw.setWindowIcon(self.handle, &icons);
     // try gl.init();
     return self;
 }
