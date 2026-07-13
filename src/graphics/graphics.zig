@@ -1,5 +1,6 @@
 // const Self = @This();
 const std = @import("std");
+const math = @import("../math.zig");
 const Surface = @import("../Window.zig").Surface;
 
 pub const opengl = @import("backends/opengl/opengl.zig");
@@ -35,5 +36,6 @@ pub fn backend(comptime b: Backend) type {
         pub fn triangle() void {
             impl.drawElements();
         }
+        pub fn rect() void {}
     };
 }

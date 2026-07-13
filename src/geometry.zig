@@ -1,7 +1,5 @@
-pub const Vec2 = struct {
-    x: f32,
-    y: f32,
-};
+const math = @import("math.zig");
+const Vec2 = math.Vec2;
 
 pub const Rectangle = struct {
     position: Vec2,

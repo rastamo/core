@@ -34,7 +34,34 @@ pub fn build(b: *std.Build) void {
     });
 
     const example = b.option([]const u8, "example", "which example to build") orelse "texture";
+
+    const install_step = b.getInstallStep();
     var exe: ?*std.Build.Step.Compile = null;
+
+    // Add "zig build all"
+    const all_step = b.step("all", "Build all examples");
+    for (examples) |ex| {
+        if (std.mem.eql(u8, ex.name, example)) continue;
+        exe = b.addExecutable(.{
+            .name = ex.name,
+            .root_module = b.createModule(.{
+                .root_source_file = b.path(ex.file),
+                .target = target,
+                .optimize = optimize,
+                .imports = &.{
+                    .{ .name = "core", .module = core },
+                    .{ .name = "assets", .module = assets },
+                },
+            }),
+        });
+
+        exe.?.use_llvm = true;
+        exe.?.root_module.linkLibrary(zglfw.artifact("glfw"));
+        b.installArtifact(exe.?);
+        all_step.dependOn(install_step);
+    }
+
+    // Add "zig build run"
     for (examples) |ex| {
         if (!std.mem.eql(u8, ex.name, example)) continue;
 
@@ -59,30 +86,7 @@ pub fn build(b: *std.Build) void {
     }
 
     const run_cmd = b.addRunArtifact(exe.?);
-    run_cmd.step.dependOn(b.getInstallStep());
-
+    run_cmd.step.dependOn(install_step);
     const run_step = b.step("run", "Run selected example");
     run_step.dependOn(&run_cmd.step);
-
-    // const all_step = b.step("all", "Build all examples");
-    // const install_step = b.getInstallStep();
-    // for (examples) |ex| {
-    //     exe = b.addExecutable(.{
-    //         .name = ex.name,
-    //         .root_module = b.createModule(.{
-    //             .root_source_file = b.path(ex.file),
-    //             .target = target,
-    //             .optimize = optimize,
-    //             .imports = &.{
-    //                 .{ .name = "core", .module = core },
-    //                 .{ .name = "assets", .module = assets },
-    //             },
-    //         }),
-    //     });
-
-    //     exe.?.use_llvm = true;
-    //     exe.?.root_module.linkLibrary(zglfw.artifact("glfw"));
-    //     b.installArtifact(exe.?);
-    //     all_step.dependOn(install_step);
-    // }
 }
