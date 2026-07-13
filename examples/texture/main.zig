@@ -6,23 +6,18 @@ const core = @import("core");
 const gfx = core.graphics.backend(.opengl);
 const zstbi = core.zstbi;
 
-pub fn main(init: std.process.Init) !void {
-    const io = init.io;
-    const allocator = init.gpa;
-    zstbi.init(io, allocator);
+fn setup_texture(io: std.Io, gpa: std.mem.Allocator) !void {
+    zstbi.init(io, gpa);
     defer zstbi.deinit();
     zstbi.setFlipVerticallyOnLoad(true);
+}
 
-    core.init();
-    defer core.deinit();
-
-    var window = try core.window.init();
-    defer window.deinit();
-    window.setVSync(false);
-
-    try gfx.init();
-
-    var shader = gfx.Shader.init(io, "src/graphics/backends/opengl/shaders/texture.vs", "src/graphics/backends/opengl/shaders/texture.fs") catch |err| {
+fn create_texture(io: std.Io) !gfx.Texture {
+    var shader = gfx.Shader.init(
+        io,
+        "src/graphics/backends/opengl/shaders/texture.vs",
+        "src/graphics/backends/opengl/shaders/texture.fs",
+    ) catch |err| {
         std.log.err("Error creating shader: {}\n", .{err});
         return;
     };
@@ -65,6 +60,34 @@ pub fn main(init: std.process.Init) !void {
     gl.bindBuffer(gl.ARRAY_BUFFER, 0);
     gl.bindVertexArray(0);
 
+    return gfx.Texture{
+        .shader = shader,
+        .va = vertex_array,
+    };
+}
+
+fn draw_texture(texture: Texture) void {
+    shader.use();
+    vertex_array.bind();
+    gfx.drawElements();
+}
+pub fn main(init: std.process.Init) !void {
+    const io = init.io;
+    const gpa = init.gpa;
+
+    // Move to core.init probably.
+    setup_texture(io, gpa);
+
+    core.init();
+    defer core.deinit();
+
+    var window = try core.window.init();
+    defer window.deinit();
+    window.setVSync(false);
+
+    try gfx.init();
+    create_texture(io, gpa);
+
     var input: core.Input = .init();
     var time: core.Time = .init(io);
 
@@ -75,10 +98,6 @@ pub fn main(init: std.process.Init) !void {
             window.setShouldClose(true);
         }
         gfx.clearScreen();
-
-        shader.use();
-        vertex_array.bind();
-        gfx.drawElements();
 
         window.swapBuffers();
         try time.sleep();

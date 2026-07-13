@@ -16,7 +16,11 @@ pub fn main(init: std.process.Init) !void {
 
     try gfx.init();
     // Abstract out!
-    var shader = gfx.Shader.init(io, "src/graphics/backends/opengl/shaders/triangle.vs", "src/graphics/backends/opengl/shaders/triangle.fs") catch |err| {
+    var shader = gfx.Shader.init(
+        io,
+        "src/graphics/backends/opengl/shaders/triangle.vs",
+        "src/graphics/backends/opengl/shaders/triangle.fs",
+    ) catch |err| {
         std.log.err("Error creating shader: {}\n", .{err});
         return;
     };
@@ -38,6 +42,7 @@ pub fn main(init: std.process.Init) !void {
     while (!window.shouldClose()) {
         time.update();
         input.poll();
+        // Down use handle directly.
         if (window.handle.getKey(.escape) == .press) {
             window.setShouldClose(true);
         }

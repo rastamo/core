@@ -22,6 +22,10 @@ pub const Backend = enum {
 pub fn backend(comptime b: Backend) type {
     const impl = Backend.impl(b);
     return struct {
+        pub const Texture = struct {
+            shader: Shader,
+            va: VertexArray,
+        };
         pub const opengl = impl;
         pub const Shader = impl.Shader;
         pub const VertexArray = impl.VertexArray;
