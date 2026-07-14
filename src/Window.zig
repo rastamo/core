@@ -31,6 +31,7 @@ pub fn init() !Self {
     // Users should be able to set title, and maybe window size.
     self.handle = try glfw.createWindow(video_mode.width, video_mode.height, "Core", glfw.getPrimaryMonitor(), null);
     glfw.makeContextCurrent(self.handle);
+    self.setVSync(false);
 
     // const icons = [_]glfw.Image{.{ .pixels = @constCast(window_icon), .height = 32, .width = 32 }};
     // glfw.setWindowIcon(self.handle, &icons);

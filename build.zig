@@ -6,7 +6,7 @@ const Example = struct {
 };
 
 const examples = [_]Example{
-    .{ .name = "triangle", .file = "examples/triangle/main.zig" },
+    // .{ .name = "triangle", .file = "examples/triangle/main.zig" },
     .{ .name = "texture", .file = "examples/texture/main.zig" },
     // .{ .name = "text", .file = "examples/text/main.zig" },
 };

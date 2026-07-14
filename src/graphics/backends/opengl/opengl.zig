@@ -18,8 +18,12 @@ pub fn init() !void {
     gl.enable(gl.MULTISAMPLE);
     gl.enable(gl.LINE_SMOOTH);
     // gl.enable(gl.CULL_FACE);
-    // gl.enable(gl.BLEND); // PNG ALPHA
-    // gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); // PNG ALPHA
+    gl.enable(gl.BLEND); // PNG ALPHA
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA); // PNG ALPHA
+}
+
+pub fn deinit() void {
+    // Deinit texture
 }
 
 pub fn clearScreen() void {

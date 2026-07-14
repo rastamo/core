@@ -3,7 +3,7 @@ const builtin = @import("builtin");
 const Io = std.Io;
 
 const core = @import("core");
-const gfx = core.graphics.backend(.default);
+const gfx = core.graphics;
 
 pub fn main(init: std.process.Init) !void {
     const io = init.io;
@@ -14,7 +14,7 @@ pub fn main(init: std.process.Init) !void {
     defer window.deinit();
     window.setVSync(false);
 
-    try gfx.init();
+    try gfx.init(io, init.gpa);
     // Abstract out!
     var shader = gfx.Shader.init(
         io,
