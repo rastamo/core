@@ -27,6 +27,9 @@ pub fn build(b: *std.Build) void {
             .{ .name = "zstbi", .module = b.dependency("zstbi", .{}).module("root") },
         },
     });
+    core.linkLibrary(zglfw.artifact("glfw"));
+
+    // Move to exe.
     // core.addAnonymousImport("window_icon", .{ .root_source_file = b.path("assets/icon.png") });
 
     const assets = b.createModule(.{
@@ -54,9 +57,7 @@ pub fn build(b: *std.Build) void {
                 },
             }),
         });
-
         exe.?.use_llvm = true;
-        exe.?.root_module.linkLibrary(zglfw.artifact("glfw"));
         b.installArtifact(exe.?);
         all_step.dependOn(install_step);
     }
@@ -77,11 +78,8 @@ pub fn build(b: *std.Build) void {
                 },
             }),
         });
-
         exe.?.use_llvm = true;
-        exe.?.root_module.linkLibrary(zglfw.artifact("glfw"));
         b.installArtifact(exe.?);
-
         break;
     }
 
