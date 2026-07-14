@@ -12,7 +12,7 @@ const gl = opengl.gl;
 
 pub fn init(io: std.Io, gpa: std.mem.Allocator) !void {
     try opengl.init();
-    try init_texture(io, gpa);
+    try initTexture(io, gpa);
 }
 
 pub fn deinit() void {
@@ -20,7 +20,7 @@ pub fn deinit() void {
     zstbi.deinit();
 }
 
-fn init_texture(io: std.Io, gpa: std.mem.Allocator) !void {
+fn initTexture(io: std.Io, gpa: std.mem.Allocator) !void {
     zstbi.init(io, gpa);
     zstbi.setFlipVerticallyOnLoad(true);
 }
@@ -32,11 +32,12 @@ pub const Texture = struct {
     vertex_array: opengl.VertexArray,
 };
 
-pub fn create_texture(io: std.Io, image: *const Image) !Texture {
+pub fn createTexture(io: std.Io, image: *const Image) !Texture {
+    _ = io;
     const shader = Shader.init(
-        io,
-        "src/graphics/backends/opengl/shaders/texture.vs",
-        "src/graphics/backends/opengl/shaders/texture.fs",
+        // io,
+        // "src/graphics/backends/opengl/shaders/texture.vs",
+        // "src/graphics/backends/opengl/shaders/texture.fs",
     ) catch |err| {
         std.log.err("Error creating shader: {}\n", .{err});
         return err;
@@ -92,7 +93,7 @@ pub fn create_texture(io: std.Io, image: *const Image) !Texture {
     };
 }
 
-pub fn draw_texture(texture: Texture) !void {
+pub fn drawTexture(texture: Texture) !void {
     texture.shader.use();
     texture.vertex_array.bind();
     opengl.drawElements();

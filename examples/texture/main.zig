@@ -18,7 +18,7 @@ pub fn main(init: std.process.Init) !void {
     var image = try gfx.Image.loadFromFile("assets/snake_l.png", 0);
     defer image.deinit();
 
-    const texture = try gfx.create_texture(init.io, &image);
+    const texture = try gfx.createTexture(init.io, &image);
     std.log.debug("{}\n", .{texture});
 
     var input: core.Input = .init();
@@ -31,7 +31,7 @@ pub fn main(init: std.process.Init) !void {
             window.setShouldClose(true);
         }
         gfx.clearScreen();
-        try gfx.draw_texture(texture);
+        try gfx.drawTexture(texture);
 
         window.swapBuffers();
         try time.sleep();
