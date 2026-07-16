@@ -31,7 +31,13 @@ pub fn main(init: std.process.Init) !void {
         }
 
         render.clearScreen();
-        try render.drawTexture(texture, .{ .x = @cos(time.time) * 5, .y = @sin(time.time) * 3, .z = 0 }, time.time * 2, time.time);
+        // try render.drawTexture(texture, .{ .x = @cos(time.time) * 5, .y = @sin(time.time) * 3, .z = 0 }, time.time * 2, .{ .x = time.time, .y = time.time });
+        try render.drawTexture(
+            texture,
+            .{},
+            0,
+            .{ .x = 16, .y = 9 },
+        );
 
         window.swapBuffers();
         try time.sleep();

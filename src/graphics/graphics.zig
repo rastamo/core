@@ -26,7 +26,7 @@ pub const Render = struct {
         opengl.clearScreen();
     }
 
-    pub fn drawTexture(self: *Render, texture: Texture, position: m.Vec3, rotation: f32, scale: f32) !void {
+    pub fn drawTexture(self: *Render, texture: Texture, position: m.Vec3, rotation: f32, scale: m.Vec3) !void {
         texture.shader.use();
 
         // Projection
@@ -41,7 +41,7 @@ pub const Render = struct {
         var model: [4]@Vector(4, f32) = undefined;
         model = zm.translation(position.x, position.y, position.z);
         model = zm.mul(zm.rotationZ(rotation), model);
-        model = zm.mul(zm.scaling(scale, scale, 1), model);
+        model = zm.mul(zm.scaling(scale.x, scale.y, scale.z), model);
         texture.shader.setMat4("model", model);
 
         // Draw
