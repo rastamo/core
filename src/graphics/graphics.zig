@@ -1,14 +1,54 @@
-// const Self = @This();
 const std = @import("std");
-const math = @import("../math.zig");
+const m = @import("../math.zig");
+const zm = @import("zmath");
 const Surface = @import("../Window.zig").Surface;
+const Camera = @import("../Camera.zig");
+const Screen = @import("../Screen.zig");
 pub const zstbi = @import("zstbi");
 
 const opengl = @import("backends/opengl/opengl.zig");
+const gl = opengl.gl;
 pub const Shader = opengl.Shader;
 pub const VertexArray = opengl.VertexArray;
-pub const clearScreen = opengl.clearScreen;
-const gl = opengl.gl;
+
+pub const Render = struct {
+    var time: f32 = 0;
+    screen: Screen,
+    camera: Camera = .{},
+
+    pub fn init(width: f32, height: f32) Render {
+        return .{
+            .screen = .{ .width = width, .height = height },
+        };
+    }
+
+    pub fn clearScreen(_: Render) void {
+        opengl.clearScreen();
+    }
+
+    pub fn drawTexture(self: *Render, texture: Texture, position: m.Vec3, rotation: f32, scale: f32) !void {
+        texture.shader.use();
+
+        // Projection
+        const projection = self.camera.getProjection(self.screen);
+        texture.shader.setMat4("projection", projection);
+
+        // View
+        const view = self.camera.getView();
+        texture.shader.setMat4("view", view);
+
+        // Model
+        var model: [4]@Vector(4, f32) = undefined;
+        model = zm.translation(position.x, position.y, position.z);
+        model = zm.mul(zm.rotationZ(rotation), model);
+        model = zm.mul(zm.scaling(scale, scale, 1), model);
+        texture.shader.setMat4("model", model);
+
+        // Draw
+        texture.vertex_array.bind();
+        opengl.drawElements();
+    }
+};
 
 pub fn init(io: std.Io, gpa: std.mem.Allocator) !void {
     try opengl.init();
@@ -34,6 +74,7 @@ pub const Texture = struct {
 
 pub fn createTexture(io: std.Io, image: *const Image) !Texture {
     _ = io;
+    // Shader should be a param, so it can properly deinit.
     const shader = Shader.init(
         // io,
         // "src/graphics/backends/opengl/shaders/texture.vs",
@@ -55,15 +96,16 @@ pub fn createTexture(io: std.Io, image: *const Image) !Texture {
         0, 1, 2,
         0, 2, 3,
     };
+
     var vertex_array: VertexArray = .init(&vertices, &indices);
     const stride = 8 * @sizeOf(@TypeOf(vertices[0]));
     vertex_array.addLayout(3, stride);
     vertex_array.addLayout(3, stride);
     vertex_array.addLayout(2, stride);
 
+    // This id need to be kept?
     var texture: c_uint = undefined;
     gl.genTextures(1, &texture);
-    std.log.debug("id: {}\n", .{texture});
     gl.bindTexture(gl.TEXTURE_2D, texture);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
@@ -91,10 +133,4 @@ pub fn createTexture(io: std.Io, image: *const Image) !Texture {
         .shader = shader,
         .vertex_array = vertex_array,
     };
-}
-
-pub fn drawTexture(texture: Texture) !void {
-    texture.shader.use();
-    texture.vertex_array.bind();
-    opengl.drawElements();
 }

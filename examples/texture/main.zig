@@ -16,13 +16,12 @@ pub fn main(init: std.process.Init) !void {
     defer gfx.deinit();
 
     var image = try gfx.Image.loadFromFile("assets/snake_l.png", 0);
-    defer image.deinit();
-
     const texture = try gfx.createTexture(init.io, &image);
-    std.log.debug("{}\n", .{texture});
+    image.deinit();
 
     var input: core.Input = .init();
     var time: core.Time = .init(init.io);
+    var render: gfx.Render = .init(1920, 1080); // Should not be provided manually.
 
     while (!window.shouldClose()) {
         time.update();
@@ -30,8 +29,9 @@ pub fn main(init: std.process.Init) !void {
         if (window.handle.getKey(.escape) == .press) {
             window.setShouldClose(true);
         }
-        gfx.clearScreen();
-        try gfx.drawTexture(texture);
+
+        render.clearScreen();
+        try render.drawTexture(texture, .{ .x = @cos(time.time) * 5, .y = @sin(time.time) * 3, .z = 0 }, time.time * 2, time.time);
 
         window.swapBuffers();
         try time.sleep();

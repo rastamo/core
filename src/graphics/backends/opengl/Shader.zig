@@ -110,7 +110,7 @@ pub fn setInt(self: Self, name: [*c]const u8, value: i32) void {
     gl.uniform1i(gl.getUniformLocation(self.id, name), value);
 }
 pub fn setMat4(self: Self, name: [*c]const u8, value: [4]@Vector(4, f32)) void {
-    gl.uniformMatrix4fv(gl.getUniformLocation(self.id, name), 1, gl.TRUE, &value[0][0]);
+    gl.uniformMatrix4fv(gl.getUniformLocation(self.id, name), 1, gl.FALSE, &value[0][0]);
 }
 pub fn setVec2(self: Self, name: [*c]const u8, value: @Vector(2, f32)) void {
     gl.uniform2fv(gl.getUniformLocation(self.id, name), 1, &value[0]);
