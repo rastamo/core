@@ -21,7 +21,7 @@ pub fn main(init: std.process.Init) !void {
 
     var input: core.Input = .init();
     var time: core.Time = .init(init.io);
-    var render: gfx.Render = .init(1920, 1080); // Should not be provided manually.
+    var renderer: gfx.Renderer = .init(window.width, window.height); // Should not be provided manually.
 
     while (!window.shouldClose()) {
         time.update();
@@ -30,9 +30,9 @@ pub fn main(init: std.process.Init) !void {
             window.setShouldClose(true);
         }
 
-        render.clearScreen();
+        renderer.clearScreen();
         // try render.drawTexture(texture, .{ .x = @cos(time.time) * 5, .y = @sin(time.time) * 3, .z = 0 }, time.time * 2, .{ .x = time.time, .y = time.time });
-        try render.drawTexture(
+        try renderer.drawTexture(
             texture,
             .{},
             0,

@@ -12,6 +12,7 @@ pub const Version = struct {
     pub const major: u16 = 3;
     pub const minor: u16 = 3;
 };
+
 pub fn init() !void {
     try zopengl.loadCoreProfile(@ptrCast(&glfw.getProcAddress), Version.major, Version.minor);
     // gl.enable(gl.DEPTH_TEST); // This is needed for proper 3D, however 2D overlay won't work.

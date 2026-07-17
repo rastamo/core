@@ -5,50 +5,12 @@ const Surface = @import("../Window.zig").Surface;
 const Camera = @import("../Camera.zig");
 const Screen = @import("../Screen.zig");
 pub const zstbi = @import("zstbi");
+pub const Renderer = @import("Renderer.zig");
 
 const opengl = @import("backends/opengl/opengl.zig");
 const gl = opengl.gl;
 pub const Shader = opengl.Shader;
 pub const VertexArray = opengl.VertexArray;
-
-pub const Render = struct {
-    var time: f32 = 0;
-    screen: Screen,
-    camera: Camera = .{},
-
-    pub fn init(width: f32, height: f32) Render {
-        return .{
-            .screen = .{ .width = width, .height = height },
-        };
-    }
-
-    pub fn clearScreen(_: Render) void {
-        opengl.clearScreen();
-    }
-
-    pub fn drawTexture(self: *Render, texture: Texture, position: m.Vec3, rotation: f32, scale: m.Vec3) !void {
-        texture.shader.use();
-
-        // Projection
-        const projection = self.camera.getProjection(self.screen);
-        texture.shader.setMat4("projection", projection);
-
-        // View
-        const view = self.camera.getView();
-        texture.shader.setMat4("view", view);
-
-        // Model
-        var model: [4]@Vector(4, f32) = undefined;
-        model = zm.translation(position.x, position.y, position.z);
-        model = zm.mul(zm.rotationZ(rotation), model);
-        model = zm.mul(zm.scaling(scale.x, scale.y, scale.z), model);
-        texture.shader.setMat4("model", model);
-
-        // Draw
-        texture.vertex_array.bind();
-        opengl.drawElements();
-    }
-};
 
 pub fn init(io: std.Io, gpa: std.mem.Allocator) !void {
     try opengl.init();
