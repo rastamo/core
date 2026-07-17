@@ -10,7 +10,7 @@ layout_index: u32 = 0,
 len_counter: u32 = 0,
 
 pub fn init(vertices: []const f32, indices: []const u32) Self {
-    var vao: u32 = 0;
+    var vao: u32 = undefined;
     gl.genVertexArrays(1, &vao);
     gl.bindVertexArray(vao);
 
@@ -31,7 +31,6 @@ pub fn indexCount(self: Self) usize {
 
 pub fn addLayout(self: *Self, len: u32, stride: u32) void {
     // This function need a friendlier ux.
-    self.bind();
     gl.vertexAttribPointer(self.layout_index, @intCast(len), gl.FLOAT, gl.FALSE, @intCast(stride), @ptrFromInt(self.len_counter * @sizeOf(f32)));
     gl.enableVertexAttribArray(self.layout_index);
     self.layout_index += 1;

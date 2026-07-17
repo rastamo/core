@@ -27,6 +27,8 @@ pub fn clearScreen(_: Self) void {
 
 pub fn drawTexture(self: *Self, texture: gfx.Texture, position: m.Vec3, rotation: f32, scale: m.Vec3) !void {
     texture.shader.use();
+    texture.shader.setInt("tex", @as(i32, @intCast(texture.unit)));
+    texture.bind();
 
     // Projection
     const projection = self.camera.getProjection(self.screen);

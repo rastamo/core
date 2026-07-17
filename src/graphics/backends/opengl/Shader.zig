@@ -19,28 +19,6 @@ pub const ShaderError = error{
 id: u32,
 
 pub fn init() !Self {
-    // const buffer_size = 1024 * 2;
-    // var buffer: [buffer_size]u8 = undefined;
-    // var file = try std.Io.Dir.cwd().openFile(io, path_vs, .{ .mode = .read_only });
-    // var reader = file.reader(io, &buffer);
-    // var interface: *std.Io.Reader = &reader.interface;
-
-    // try interface.fillMore();
-
-    // var vs_buffer: [buffer_size]u8 = undefined;
-    // @memcpy(vs_buffer[0..interface.end], buffer[0..interface.end]);
-    // vs_buffer[interface.end] = 0;
-    // const vs: [*c]const u8 = &vs_buffer[0];
-
-    // file = try std.Io.Dir.cwd().openFile(io, path_fs, .{ .mode = .read_only });
-    // reader = file.reader(io, &buffer);
-    // interface = &reader.interface;
-
-    // try interface.fillMore();
-    // var fs_buffer: [buffer_size]u8 = undefined;
-    // @memcpy(fs_buffer[0..interface.end], buffer[0..interface.end]);
-    // fs_buffer[interface.end] = 0;
-    // const fs: [*c]const u8 = &fs_buffer[0];
     const vs: [*c]const u8 = &texture_vs[0];
     const fs: [*c]const u8 = &texture_fs[0];
 

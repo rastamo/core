@@ -16,8 +16,14 @@ pub fn main(init: std.process.Init) !void {
     defer gfx.deinit();
 
     var image = try gfx.Image.loadFromFile("assets/snake_l.png", 0);
-    const texture = try gfx.createTexture(init.io, &image);
-    image.deinit();
+    const snake = try gfx.createTexture(init.io, &image);
+    defer image.deinit();
+    std.log.debug("{}", .{snake});
+
+    var image2 = try gfx.Image.loadFromFile("assets/icon.png", 0);
+    const icon = try gfx.createTexture(init.io, &image2);
+    defer image2.deinit();
+    std.log.debug("{}", .{icon});
 
     var input: core.Input = .init();
     var time: core.Time = .init(init.io);
@@ -32,12 +38,8 @@ pub fn main(init: std.process.Init) !void {
 
         renderer.clearScreen();
         // try render.drawTexture(texture, .{ .x = @cos(time.time) * 5, .y = @sin(time.time) * 3, .z = 0 }, time.time * 2, .{ .x = time.time, .y = time.time });
-        try renderer.drawTexture(
-            texture,
-            .{},
-            0,
-            .{ .x = 16, .y = 9 },
-        );
+        try renderer.drawTexture(snake, .{ .x = -4 }, 0, .{ .x = 4, .y = 2 });
+        try renderer.drawTexture(icon, .{ .x = 4 }, 0, .{ .x = 2, .y = 1 });
 
         window.swapBuffers();
         try time.sleep();

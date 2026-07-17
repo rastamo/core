@@ -32,8 +32,16 @@ pub const Texture = struct {
     id: u32,
     shader: opengl.Shader,
     vertex_array: opengl.VertexArray,
+    unit: u32,
+
+    pub fn bind(self: Texture) void {
+        opengl.activeTexture(gl.TEXTURE0 + self.unit);
+        opengl.bindTexture(self.id);
+        // std.log.debug("{}", .{self.id});
+    }
 };
 
+var index: u32 = 0;
 pub fn createTexture(io: std.Io, image: *const Image) !Texture {
     _ = io;
     // Shader should be a param, so it can properly deinit.
@@ -45,8 +53,8 @@ pub fn createTexture(io: std.Io, image: *const Image) !Texture {
         std.log.err("Error creating shader: {}\n", .{err});
         return err;
     };
+    shader.use();
     // defer shader.deinit();
-
     // Position, color and texture
     const vertices: [8 * 4]f32 = .{
         -0.5, 0.5, 0.0, 1, 0, 0, 0, 1, // top left
@@ -60,20 +68,26 @@ pub fn createTexture(io: std.Io, image: *const Image) !Texture {
     };
 
     var vertex_array: VertexArray = .init(&vertices, &indices);
+    vertex_array.bind();
+    defer vertex_array.unbind();
     const stride = 8 * @sizeOf(@TypeOf(vertices[0]));
     vertex_array.addLayout(3, stride);
     vertex_array.addLayout(3, stride);
     vertex_array.addLayout(2, stride);
 
-    // This id need to be kept?
-    var texture: c_uint = undefined;
-    gl.genTextures(1, &texture);
-    gl.bindTexture(gl.TEXTURE_2D, texture);
+    var texture: Texture = .{
+        .id = undefined,
+        .shader = shader,
+        .vertex_array = vertex_array,
+        .unit = index,
+    };
+    index += 1;
+    gl.genTextures(1, &texture.id);
+    texture.bind();
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-
     gl.texImage2D(
         gl.TEXTURE_2D,
         0,
@@ -86,13 +100,6 @@ pub fn createTexture(io: std.Io, image: *const Image) !Texture {
         @ptrCast(image.data),
     );
     gl.generateMipmap(gl.TEXTURE_2D);
-
     gl.bindBuffer(gl.ARRAY_BUFFER, 0);
-    gl.bindVertexArray(0);
-
-    return Texture{
-        .id = texture,
-        .shader = shader,
-        .vertex_array = vertex_array,
-    };
+    return texture;
 }

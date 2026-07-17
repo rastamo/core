@@ -44,3 +44,11 @@ pub fn draw() void {
 pub fn drawElements() void {
     gl.drawElements(gl.TRIANGLES, 6, gl.UNSIGNED_INT, null);
 }
+
+pub fn activeTexture(texture: u32) void {
+    gl.activeTexture(texture);
+}
+
+pub fn bindTexture(id: u32) void {
+    gl.bindTexture(gl.TEXTURE_2D, id);
+}
