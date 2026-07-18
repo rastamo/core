@@ -28,13 +28,12 @@ keyboard: Keyboard = .{},
 keys: [348 + 1]Key = .{Key{}} ** 349,
 previous_keys: [348 + 1]Key = .{Key{}} ** 349,
 
-pub fn init() Self {
-    const self: Self = .{};
-    return self;
+pub fn init(self: *Self, window: *Window) void {
+    self.setup(window);
 }
 
 pub fn setup(self: *Self, window: *Window) void {
-    glfw.setWindowUserPointer(window.handle, &self.mouse);
+    glfw.setWindowUserPointer(window.handle, self);
     _ = glfw.setCursorPosCallback(window.handle, Self.mouse_callback);
     _ = glfw.setScrollCallback(window.handle, Self.scroll_callback);
     _ = glfw.setKeyCallback(window.handle, Self.key_callback);
@@ -42,6 +41,8 @@ pub fn setup(self: *Self, window: *Window) void {
 
 pub fn poll(self: *Self) void {
     glfw.pollEvents();
+    // std.log.debug("{*}", .{self});
+    // std.log.debug("{}", .{self.key(.space)});
     for (0..self.keys.len) |i| {
         const previous = &self.previous_keys[i];
         const current = &self.keys[i];
@@ -51,7 +52,8 @@ pub fn poll(self: *Self) void {
     }
 }
 
-pub fn key(self: Self, key_enum: glfw.Key) Key {
+pub fn key(self: *Self, key_enum: glfw.Key) Key {
+    // std.log.info("{}", .{self.keys[@as(usize, @intCast(@intFromEnum(key_enum)))]});
     return self.keys[@as(usize, @intCast(@intFromEnum(key_enum)))];
 }
 
@@ -76,19 +78,19 @@ pub fn key_callback(window: *glfw.Window, key_enum: glfw.Key, scancode: i32, act
     if (key_enum == .unknown) return;
     _ = scancode;
     _ = mods;
-    const maybe_input = glfw.getWindowUserPointer(window, Self);
-    if (maybe_input) |input| {
-        const index: usize = @intCast(@intFromEnum(key_enum));
-        switch (action) {
-            .press => {
-                input.keys[index] = Key{ .down = true };
-            },
-            .release => {
-                input.keys[index] = Key{ .down = false };
-            },
-            .repeat => {
-                input.keys[index] = Key{ .down = true };
-            },
-        }
+    const input: *Self = glfw.getWindowUserPointer(window, Self) orelse return;
+    // std.log.debug("{*}", .{input});
+    const index: usize = @intCast(@intFromEnum(key_enum));
+    switch (action) {
+        .press => {
+            input.*.keys[index] = Key{ .down = true };
+            // std.log.debug("{}", .{input.keys[index]});
+        },
+        .release => {
+            input.keys[index] = Key{ .down = false };
+        },
+        .repeat => {
+            input.keys[index] = Key{ .down = true };
+        },
     }
 }

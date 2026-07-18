@@ -9,7 +9,7 @@ pub fn main(init: std.process.Init) !void {
     core.init();
     defer core.deinit();
 
-    var window = try core.window.init();
+    var window = try core.Window.init();
     defer window.deinit();
 
     try gfx.init(init.io, init.gpa);
@@ -25,7 +25,7 @@ pub fn main(init: std.process.Init) !void {
     defer image2.deinit();
     std.log.debug("{}", .{icon});
 
-    var input: core.Input = .init();
+    var input: core.Input = .init(&window);
     var time: core.Time = .init(init.io);
     var renderer: gfx.Renderer = .init(window.width, window.height); // Should not be provided manually.
 

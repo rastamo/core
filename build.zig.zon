@@ -17,8 +17,8 @@
             .hash = "zmath-0.11.0-dev-wjwivTwtAwDOjG2_KGP-HLtHrONfsFfHttalmxFAGVAK",
         },
         .TrueType = .{
-            .url = "git+https://codeberg.org/andrewrk/TrueType#b79115f93a8d9fbd19846a7199797a654801839e",
-            .hash = "TrueType-0.0.0-Ne-mWNJxAQCM7WYbeHz6cieiVtPqxeOQ2b5ekAqtYDac",
+            .url = "git+https://codeberg.org/andrewrk/TrueType.git#e46bd6a01e1be78ee280284733993a988eaef0d6",
+            .hash = "TrueType-0.0.0-Ne-mWOdyAQDy0_HzImRIFlqXnBWQ97MlU6S1dGJvH4nX",
         },
         .zstbi = .{
             .url = "git+https://github.com/zig-gamedev/zstbi#3813f5f113b26f644cfa01a30155cc76b3526e91",

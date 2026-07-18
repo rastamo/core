@@ -6,6 +6,9 @@ const zm = @import("zmath");
 const texture_vs = @embedFile("shaders/texture.vs");
 const texture_fs = @embedFile("shaders/texture.fs");
 
+const text_vs = @embedFile("shaders/text.vs");
+const text_fs = @embedFile("shaders/text.fs");
+
 pub const ShaderError = error{
     VertexShaderCreationFailed,
     FragmentShaderCreationFailed,
@@ -16,11 +19,27 @@ pub const ShaderError = error{
     OpenGLError,
 };
 
+const Kind = enum {
+    texture,
+    text,
+};
+
 id: u32,
 
-pub fn init() !Self {
-    const vs: [*c]const u8 = &texture_vs[0];
-    const fs: [*c]const u8 = &texture_fs[0];
+pub fn init(kind: Kind) !Self {
+    var vs: [*c]const u8 = undefined;
+    var fs: [*c]const u8 = undefined;
+    switch (kind) {
+        .texture => {
+            vs = &texture_vs[0];
+            fs = &texture_fs[0];
+        },
+
+        .text => {
+            vs = &text_vs[0];
+            fs = &text_fs[0];
+        },
+    }
 
     // Build and compile shader program.
     const self: Self = .{ .id = gl.createProgram() };

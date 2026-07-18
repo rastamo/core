@@ -7,8 +7,8 @@ const Example = struct {
 
 const examples = [_]Example{
     // .{ .name = "triangle", .file = "examples/triangle/main.zig" },
-    .{ .name = "texture", .file = "examples/texture/main.zig" },
-    // .{ .name = "text", .file = "examples/text/main.zig" },
+    // .{ .name = "texture", .file = "examples/texture/main.zig" },
+    .{ .name = "text", .file = "examples/text/main.zig" },
 };
 
 pub fn build(b: *std.Build) void {
@@ -25,6 +25,7 @@ pub fn build(b: *std.Build) void {
             .{ .name = "zopengl", .module = b.dependency("zopengl", .{}).module("root") },
             .{ .name = "zmath", .module = b.dependency("zmath", .{}).module("root") },
             .{ .name = "zstbi", .module = b.dependency("zstbi", .{}).module("root") },
+            .{ .name = "TrueType", .module = b.dependency("TrueType", .{}).module("TrueType") },
         },
     });
     core.linkLibrary(zglfw.artifact("glfw"));
@@ -36,7 +37,7 @@ pub fn build(b: *std.Build) void {
         .root_source_file = b.path("assets/assets.zig"),
     });
 
-    const example = b.option([]const u8, "example", "which example to build") orelse "texture";
+    const example = b.option([]const u8, "example", "which example to build") orelse "text";
 
     const install_step = b.getInstallStep();
     var exe: ?*std.Build.Step.Compile = null;

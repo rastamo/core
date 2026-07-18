@@ -2,13 +2,13 @@ const std = @import("std");
 const builtin = @import("builtin");
 const Io = std.Io;
 
-// This file should only take engine as dependency.
 const core = @import("core");
-const glfw = @import("zglfw");
-const zopengl = @import("zopengl");
-const gl = zopengl.bindings;
-const zm = @import("zmath");
-const TrueType = @import("TrueType");
+const gfx = core.graphics;
+
+const gl = core.graphics.gl;
+
+// Should be moved into core.
+const TrueType = core.TrueType;
 
 const Character = struct {
     id: u32,
@@ -29,33 +29,21 @@ const Screen = struct {
 pub fn main(init: std.process.Init) !void {
     const io = init.io;
     const gpa = init.gpa;
-    std.debug.print("{s}\n", .{"Core library"});
 
-    // Initialize and configure -> platform/glfw.zig
-    try glfw.init();
-    defer glfw.terminate();
-    glfw.windowHint(.context_version_major, 3);
-    glfw.windowHint(.context_version_minor, 3);
-    glfw.windowHint(.opengl_profile, .opengl_core_profile);
-    if (builtin.os.tag == .macos) {
-        glfw.windowHint(.opengl_forward_compat, true);
-    }
+    core.init();
+    defer core.deinit();
 
     // Window creation -> platform/Window.zig
-    const window = try glfw.createWindow(screen.width, screen.height, "core", glfw.getPrimaryMonitor(), null);
-    defer window.destroy();
-    glfw.makeContextCurrent(window);
+    var window = try core.Window.init();
+    defer window.deinit();
 
     // Graphics -> graphics/gl.zig
-    try zopengl.loadCoreProfile(@ptrCast(&glfw.getProcAddress), 3, 3);
-    gl.enable(gl.CULL_FACE);
-    gl.enable(gl.BLEND);
-    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+    try gfx.init(io, gpa);
 
     // Graphics -> graphics/shaders/text.zig
-    var shader = try core.graphics.Shader.init(io, "src/graphics/shaders/text.vs", "src/graphics/shaders/text.fs");
+    var shader = try core.graphics.Shader.init(.text);
     defer shader.deinit();
-    const projection = zm.orthographicLh(screen.width, screen.height, 0.1, 100);
+    const projection = core.zm.orthographicLh(screen.width, screen.height, 0.1, 100);
     shader.use();
     shader.setMat4("projection", projection);
 
@@ -106,21 +94,28 @@ pub fn main(init: std.process.Init) !void {
     gl.enableVertexAttribArray(0);
 
     // Is this needed? Some kind of deinit.
-    gl.bindBuffer(gl.ARRAY_BUFFER, 0);
-    gl.bindVertexArray(0);
+    // gl.bindBuffer(gl.ARRAY_BUFFER, 0);
+    // gl.bindVertexArray(0);
 
-    const clock: Io.Clock = .boot;
-    while (!glfw.windowShouldClose(window)) {
-        glfw.pollEvents();
-        if (window.getKey(.escape) == .press) {
+    var input: core.Input = undefined;
+    input.init(&window);
+    var time: core.Time = .init(io);
+
+    while (!window.shouldClose()) {
+        time.update();
+        input.poll();
+        if (input.key(.escape).down) {
             window.setShouldClose(true);
+        }
+        if (input.key(.space).down) {
+            std.log.info("Space is down.", .{});
         }
         gl.clearColor(0.2, 0.3, 0.3, 1);
         gl.clear(gl.COLOR_BUFFER_BIT);
         renderText(&shader);
 
-        glfw.swapBuffers(window);
-        try std.Io.sleep(io, .fromMilliseconds(16), clock);
+        window.swapBuffers();
+        try time.sleep();
     }
 }
 

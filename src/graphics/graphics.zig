@@ -8,7 +8,7 @@ pub const zstbi = @import("zstbi");
 pub const Renderer = @import("Renderer.zig");
 
 const opengl = @import("backends/opengl/opengl.zig");
-const gl = opengl.gl;
+pub const gl = opengl.gl;
 pub const Shader = opengl.Shader;
 pub const VertexArray = opengl.VertexArray;
 
@@ -45,11 +45,7 @@ var index: u32 = 0;
 pub fn createTexture(io: std.Io, image: *const Image) !Texture {
     _ = io;
     // Shader should be a param, so it can properly deinit.
-    const shader = Shader.init(
-        // io,
-        // "src/graphics/backends/opengl/shaders/texture.vs",
-        // "src/graphics/backends/opengl/shaders/texture.fs",
-    ) catch |err| {
+    const shader = Shader.init(.texture) catch |err| {
         std.log.err("Error creating shader: {}\n", .{err});
         return err;
     };
