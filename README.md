@@ -1,6 +1,6 @@
 Todo:
 
 - Add error struct for Window.zig
-- Add rotations
+- Audio
 - Trial game library on game
 

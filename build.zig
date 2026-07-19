@@ -12,6 +12,10 @@ const examples = [_]Example{
 };
 
 pub fn build(b: *std.Build) void {
+    const assets = b.createModule(.{
+        .root_source_file = b.path("assets/assets.zig"),
+    });
+
     const target = b.standardTargetOptions(.{});
     const optimize = b.standardOptimizeOption(.{});
     const zglfw = b.dependency("zglfw", .{
@@ -26,16 +30,13 @@ pub fn build(b: *std.Build) void {
             .{ .name = "zmath", .module = b.dependency("zmath", .{}).module("root") },
             .{ .name = "zstbi", .module = b.dependency("zstbi", .{}).module("root") },
             .{ .name = "TrueType", .module = b.dependency("TrueType", .{}).module("TrueType") },
+            .{ .name = "assets", .module = assets },
         },
     });
     core.linkLibrary(zglfw.artifact("glfw"));
 
     // Move to exe.
     // core.addAnonymousImport("window_icon", .{ .root_source_file = b.path("assets/icon.png") });
-
-    const assets = b.createModule(.{
-        .root_source_file = b.path("assets/assets.zig"),
-    });
 
     const example = b.option([]const u8, "example", "which example to build") orelse "text";
 

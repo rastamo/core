@@ -3,6 +3,11 @@ pub const Vec2 = struct {
     y: f32 = 0,
 };
 
+pub const Size = struct {
+    width: f32 = 0,
+    height: f32 = 0,
+};
+
 pub const Vec3 = struct {
     x: f32 = 0,
     y: f32 = 0,

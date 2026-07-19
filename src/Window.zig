@@ -4,11 +4,11 @@ const std = @import("std");
 const glfw = @import("zglfw");
 const gl = @import("graphics/backends/opengl/opengl.zig");
 const builtin = @import("builtin");
+const m = @import("math.zig");
 
 handle: *glfw.Window = undefined,
 is_fullscreen: bool = true,
-width: f32 = 0,
-height: f32 = 0,
+size: m.Size = undefined,
 
 pub fn init() !Self {
     var self: Self = .{};
@@ -27,7 +27,7 @@ pub fn init() !Self {
 
     const monitor = glfw.getPrimaryMonitor();
     const video_mode = try glfw.getVideoMode(monitor.?);
-    self.width, self.height = .{ @floatFromInt(video_mode.width), @floatFromInt(video_mode.height) };
+    self.size = .{ .width = @floatFromInt(video_mode.width), .height = @floatFromInt(video_mode.height) };
     // Users should be able to set title, and maybe window size.
     self.handle = try glfw.createWindow(video_mode.width, video_mode.height, "Core", glfw.getPrimaryMonitor(), null);
     glfw.makeContextCurrent(self.handle);
